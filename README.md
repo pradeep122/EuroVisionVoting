@@ -9,7 +9,7 @@
 - Validation for countries and year.
 - Robust Application to handle moderate traffic spikes
 
-
+```text
     Functional Requirements
     
     --------------------------------------
@@ -22,7 +22,7 @@
     ------------------------------------          
     Feature: Fetching Results
         User can see top 3 countries by votes for any year
-        
+``` 
 
 I chose a lightweight Web Framework ( Spark ), backed by a Redis database.  Redis is configured to write to disk on every write to handle data consistency. In case of failure, the votes being processed will be lost. This setup provides scalability at the cost of consistency.
  
@@ -38,6 +38,7 @@ If data consistency is a priority , we could go for a relational database with r
         
 ## Features 
 
+```text
             [X] Done  [-] Pending
     [x] POST call to accept votes for a year
     [x] GET call to show top 3 winners for a year
@@ -56,6 +57,7 @@ If data consistency is a priority , we could go for a relational database with r
     [-] Caching to improve speed of GET calls
     [-] Metrics (throughput, latency, jvm metrics (memory, cpu) disk )
     [-] Performance Testing
+```
 
 ## Tech Stack
 

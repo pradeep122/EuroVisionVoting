@@ -121,5 +121,15 @@ public class Router {
             LOG.info("Application stated .. \n Port : {} \n Active Threads : {} ", port(), activeThreadCount());
         }).start();
 
+
+    }
+
+    public void shutdown(){
+        stop();
+        // handle Spark server shutdown
+        new Thread(() -> {
+            awaitStop();
+            LOG.info("Application shutdown complete.");
+        }).start();
     }
 }

@@ -1,20 +1,55 @@
 package com.deepster.eurovision;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import redis.embedded.RedisServer;
 
+import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.*;
+import redis.embedded.RedisServer;
+
 
 class APITests {
 
+    private static final Logger LOG = LoggerFactory.getLogger(APITests.class);
     private final String base = "http://localhost:8080";
+    private static RedisServer redisServer;
 
     private String vote(String from, String to) {
         return String.format("{\"countryFrom\" : \"%s\", \"votedFor\" : \"%s\"}", from, to);
+    }
+
+    @BeforeAll
+    static void beforeAll() {
+
+        try {
+            redisServer = new RedisServer(6379);
+            redisServer.start();
+        } catch (IOException e) {
+            LOG.error("Unable to start Redis Server for Integration Tests. ", e);
+        }
+        Application.getInstance().startup();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            LOG.error("Sleep Interrupted !", e);
+        }
+    }
+
+    @AfterAll
+    static void afterAll() {
+        Application.getInstance().shutdown();
+        redisServer.stop();
     }
 
     @Test

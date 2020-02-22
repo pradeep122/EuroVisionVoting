@@ -97,7 +97,6 @@ jacocoTestReport {
 }
 
 release {
-    tagTemplate = 'v$version'
     versionPropertyFile = 'gradle.properties'
 }
 

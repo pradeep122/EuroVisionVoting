@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.deepster.eurovision'
-version '1.0-SNAPSHOT'
+version '1.0.0'
 applicationName = 'EuroVisionVoting'
 wrapper {
     gradleVersion '6.2'

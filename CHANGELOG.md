@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Deploy to any cloud provider
  
 ## [Unreleased]
-
+ - Using gradle tasks to build, tag and deploy docker images using the project version
+ 
 ## [1.0.0] - 2020-02-22
 ### Added
 - POST call to accept votes for a year

@@ -2,7 +2,9 @@ plugins {
     id 'idea'
     id 'application'
     id 'jacoco'
+    id 'com.palantir.docker' version '0.25.0'
     id "com.avast.gradle.docker-compose" version "0.10.9"
+    id 'net.researchgate.release' version '2.6.0'
 }
 
 group 'com.deepster.eurovision'
@@ -76,8 +78,13 @@ dockerCompose.isRequiredBy(test)
 
 
 dockerCompose {
-    //    useComposeFiles = ['docker-compose.yml', 'docker-compose.prod.yml']
     captureContainersOutput = false
+}
+
+docker {
+    name "deepster/eurovision-voting:${version}"
+    tag 'latest', "deepster/eurovision-voting:${version}"
+    copySpec.from("build/libs").into("libs")
 }
 
 
@@ -104,8 +111,6 @@ dependencies {
     testImplementation 'com.github.kstyrc:embedded-redis:0.6'
     integrationTestImplementation 'io.rest-assured:rest-assured:4.2.0'
     integrationTestImplementation 'io.rest-assured:json-path:4.2.0'
-    docker 'redis:redis:5-alpine'
-    docker 'redis:redis-commander:latest'
 
 }
 

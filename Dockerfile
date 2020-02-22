@@ -11,7 +11,7 @@ ENV CONFIG_FILE /usr/config/production.conf
 ENV CONFIG_OPTS "-Dconfig.file=$CONFIG_FILE -Dlogback.configurationFile=$LOGBACK_FILE"
 
 # Add the executable jar
-ADD ./build/libs/*.jar app.jar
+ADD ./libs/*.jar app.jar
 
 EXPOSE 80
 # Launch the Application

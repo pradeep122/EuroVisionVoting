@@ -90,4 +90,19 @@ If data consistency is a priority , we could go for a relational database with r
 
 ```
     
-        
+## Build and Run
+
+Using Docker and Docker Compose
+
+    gradlew.bat
+    docker build -t deepster/eurovision-voting:latest .
+    docker push deepster/eurovision-voting:latest
+    docker-compose down
+    docker-compose up
+
+
+## Limitations
+
+- Using Redis in memory DB to handle all traffic, could migrate to a message queue for queueing requests to better hanlde higher loads and spikes
+- Using personal Docker Hub to publish and pull images from, a private repo is preferable
+- No separation of production config, although possible to add it easily

@@ -15,3 +15,12 @@ services:
       - redis:redis
     ports:
       - "8081:8081"
+  eurovisionVoting:
+    image: deepster/eurovision-voting
+    volumes:
+      - ./docker/app/conf/production.conf:/usr/config/production.conf
+      - ./docker/app/conf/logback.xml:/usr/config/logback.xml
+    links:
+      - redis:redis
+    ports:
+      - "8080:80"

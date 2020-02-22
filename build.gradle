@@ -1,6 +1,7 @@
 plugins {
     id 'idea'
     id 'application'
+    id 'jacoco'
 }
 
 group 'com.deepster.eurovision'
@@ -35,7 +36,7 @@ sourceSets {
 task integrationTest(type: Test){
     description = 'Run the integration tests.'
     group = 'verification'
-    testClassesDir = sourceSets.integrationTest.output.classesDirs
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
     shouldRunAfter(test)
 }
@@ -54,6 +55,16 @@ tasks.withType(Test) {
     testLogging.showStandardStreams true
     useJUnitPlatform()
 }
+
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.destination file("${buildDir}/reports/jacocoHtml")
+    }
+}
+
 
 dependencies {
     implementation 'com.google.inject:guice:4.2.2:no_aop'

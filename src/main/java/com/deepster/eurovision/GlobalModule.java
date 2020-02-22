@@ -13,13 +13,16 @@ import com.google.inject.name.Named;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisConnectionException;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.sync.RedisCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public final class GlobalModule extends AbstractModule {
@@ -39,13 +42,41 @@ public final class GlobalModule extends AbstractModule {
     @Singleton
     @Provides
     RedisCommands<String, String> getClient(final Config conf) {
-        String redisHost = conf.getString("redis.host");
-        int redisPort = conf.getInt("redis.port");
+        final String redisHost = conf.getString("redis.host");
+        final int redisPort = conf.getInt("redis.port");
+        final int retries = conf.getInt("redis.retry_count");
         RedisURI redisUri = RedisURI.Builder.redis(redisHost, redisPort)
                 .withTimeout(Duration.ofSeconds(conf.getInt("redis.timeout_in_seconds")))
                 .build();
         RedisClient client = RedisClient.create(redisUri);
-        return client.connect().sync();
+
+        // Exponential backoff while connecting to redis
+        RedisCommands<String,String> connection = null;
+        long sleepSeconds = 2;
+        int remainingTries = retries;
+        while(remainingTries > 0){
+            remainingTries --;
+            try {
+                connection = client.connect().sync();
+                break;
+            } catch (RedisConnectionException ex){
+                try{
+
+                    LOG.error(String.format("Failed to connect to Redis at %s:%d , retrying in %d seconds. %d retries left", redisHost, redisPort, sleepSeconds, remainingTries));
+                    TimeUnit.SECONDS.sleep(sleepSeconds);
+                    sleepSeconds = sleepSeconds * sleepSeconds;
+                } catch (InterruptedException iex){
+                    LOG.error("Unable to sleep for retries");
+
+                }
+            }
+        }
+
+        if(connection == null){
+            throw new RedisConnectionException(String.format("Unable to connect to Redis after %d retries", retries));
+        }
+
+        return connection;
     }
 
 

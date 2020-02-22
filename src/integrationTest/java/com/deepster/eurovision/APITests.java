@@ -31,25 +31,12 @@ class APITests {
 
     @BeforeAll
     static void beforeAll() {
-
-        try {
-            redisServer = new RedisServer(6379);
-            redisServer.start();
-        } catch (IOException e) {
-            LOG.error("Unable to start Redis Server for Integration Tests. ", e);
-        }
         Application.getInstance().startup();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            LOG.error("Sleep Interrupted !", e);
-        }
     }
 
     @AfterAll
     static void afterAll() {
         Application.getInstance().shutdown();
-        redisServer.stop();
     }
 
     @Test

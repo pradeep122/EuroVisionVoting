@@ -2,11 +2,12 @@ plugins {
     id 'idea'
     id 'application'
     id 'jacoco'
+    id "com.avast.gradle.docker-compose" version "0.10.9"
 }
 
 group 'com.deepster.eurovision'
 version '1.0-SNAPSHOT'
-
+applicationName = 'EuroVisionVoting'
 wrapper {
     gradleVersion '6.2'
 }
@@ -64,11 +65,19 @@ configurations {
 }
 
 tasks.withType(Test) {
-    ignoreFailures true
-    failFast true
+//    ignoreFailures true
+//    failFast true
 //    maxParallelForks 3
-    testLogging.showStandardStreams true
+//    testLogging.showStandardStreams true
     useJUnitPlatform()
+}
+
+dockerCompose.isRequiredBy(test)
+
+
+dockerCompose {
+    //    useComposeFiles = ['docker-compose.yml', 'docker-compose.prod.yml']
+    captureContainersOutput = false
 }
 
 
@@ -95,4 +104,9 @@ dependencies {
     testImplementation 'com.github.kstyrc:embedded-redis:0.6'
     integrationTestImplementation 'io.rest-assured:rest-assured:4.2.0'
     integrationTestImplementation 'io.rest-assured:json-path:4.2.0'
+    docker 'redis:redis:5-alpine'
+    docker 'redis:redis-commander:latest'
+
 }
+
+defaultTasks 'build'

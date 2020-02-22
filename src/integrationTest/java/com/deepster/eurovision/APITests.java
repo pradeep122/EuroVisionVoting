@@ -23,6 +23,7 @@ class APITests {
 
     private static final Logger LOG = LoggerFactory.getLogger(APITests.class);
     private final String base = "http://localhost:8080";
+    //TODO use docker compose and a grale plugin to start a redis server
     private static RedisServer redisServer;
 
     private String vote(String from, String to) {

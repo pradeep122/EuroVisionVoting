@@ -26,7 +26,7 @@ public class Utils {
         final String CUSTOM_NCSA_FORMAT = "%{client}a - %u %t \"%r\" %s %O \"%{Referer}i\" \"%{User-Agent}i\"  {\"latency\": %{ms}T}";
         final CustomRequestLog accessLogger = new CustomRequestLog(logger::info, CUSTOM_NCSA_FORMAT);
 
-        final EmbeddedJettyFactory jettyServerFactory = new EmbeddedJettyFactory(new Utils.EmbeddedJettyServerFactory(accessLogger));
+        final EmbeddedJettyFactory jettyServerFactory = new EmbeddedJettyFactory(new EmbeddedJettyServerFactory(accessLogger));
 
         EmbeddedServers.add(EmbeddedServers.Identifiers.JETTY, jettyServerFactory);
     }
@@ -37,7 +37,7 @@ public class Utils {
      * <p>
      * Copies a Jetty Server implemenation and wraps it with a request logger instance.
      */
-    private class EmbeddedJettyServerFactory implements JettyServerFactory {
+    private static class EmbeddedJettyServerFactory implements JettyServerFactory {
         private CustomRequestLog requestLog;
 
         EmbeddedJettyServerFactory(CustomRequestLog requestLog) {
@@ -48,10 +48,9 @@ public class Utils {
         public Server create(final int maxThreads, final int minThreads, final int threadTimeoutMillis) {
             Server server;
             if (maxThreads > 0) {
-                int max = maxThreads > 0 ? maxThreads : 200;
                 int min = minThreads > 0 ? minThreads : 8;
                 int idleTimeout = threadTimeoutMillis > 0 ? threadTimeoutMillis:'\uea60';
-                server = new Server(new QueuedThreadPool(max, min, idleTimeout));
+                server = new Server(new QueuedThreadPool(maxThreads, min, idleTimeout));
             } else {
                 server = new Server();
             }

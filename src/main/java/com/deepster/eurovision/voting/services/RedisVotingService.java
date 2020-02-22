@@ -139,6 +139,7 @@ public final class RedisVotingService implements VotingService {
         return new Winners(winners.getYear(), prettifyCountry(winners.getFirst()), prettifyCountry(winners.getSecond()), prettifyCountry(winners.getThird()));
     }
 
+    // TODO move public methods on top
     @Override
     public long cast(final int year, final Vote vote) {
         LOG.debug("Casting vote - {}", vote);

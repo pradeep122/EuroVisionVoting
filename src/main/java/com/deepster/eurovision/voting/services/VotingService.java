@@ -8,7 +8,7 @@ import com.deepster.eurovision.voting.models.Winners;
  * Interface for a Voting Service.
  */
 public interface VotingService {
-
+    // TODO remove cast and getResults
     /**
      * Given a year and a Vote (countryFrom and votedFor), a vote is cast.
      *

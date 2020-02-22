@@ -10,6 +10,7 @@ public class Winners {
 
     @JsonProperty(required = true)
     private final int year;
+    // TODO make it extendable
     private final String first;
     private final String second;
     private final String third;

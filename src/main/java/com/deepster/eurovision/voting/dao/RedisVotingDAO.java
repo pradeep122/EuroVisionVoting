@@ -36,7 +36,8 @@ public class RedisVotingDAO implements VotingDAO {
     public Winners getResults(int year) {
         List<String> result = connection.zrevrange(String.format("euro_vision:aggregate:%d", year), 0, 3);
         LOG.debug(result.toString());
-        return new Winners(year, result.get(0), result.get(1), result.get(2));
+        //TODO handle empty results
+         return new Winners(year, result.get(0), result.get(1), result.get(2));
 
     }
 }

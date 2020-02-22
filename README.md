@@ -46,9 +46,9 @@ If data consistency is a priority , we could go for a relational database with r
     [x] Return proper HTTP codes  
     [x] API tests
     [x] Logging ( linked to loggly )
-    [-] Unit Tests for VotingService
+    [x] Unit Tests for VotingService
+    [x] Gradle tasks for check, test, build and run
     [-] Containerization
-    [-] Gradle tasks for check, test, build, run and deploy
     [-] Extranalize all strings and support Internationalization
     [-] Setup docker-compose for deployment
     [-] Deploy to any cloud provider

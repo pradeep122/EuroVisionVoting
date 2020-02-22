@@ -2,6 +2,7 @@ package com.deepster.eurovision.voting.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Objects;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -28,5 +29,18 @@ public class Vote {
     @Override
     public String toString() {
         return "Vote{ from='" + countryFrom + '\'' + ", to='" + votedFor + '\'' + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this==o) return true;
+        if (o==null || getClass()!=o.getClass()) return false;
+        Vote vote = (Vote) o;
+        return Objects.equal(getCountryFrom(), vote.getCountryFrom()) && Objects.equal(getVotedFor(), vote.getVotedFor());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getCountryFrom(), getVotedFor());
     }
 }

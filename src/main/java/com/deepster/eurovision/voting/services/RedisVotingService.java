@@ -1,5 +1,6 @@
 package com.deepster.eurovision.voting.services;
 
+import com.deepster.eurovision.voting.dao.VotingDAO;
 import com.deepster.eurovision.voting.exceptions.InvalidCountryException;
 import com.deepster.eurovision.voting.exceptions.InvalidVoteBodyException;
 import com.deepster.eurovision.voting.exceptions.InvalidYearException;
@@ -10,16 +11,14 @@ import com.deepster.eurovision.voting.models.Winners;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.typesafe.config.Config;
-import io.lettuce.core.api.sync.RedisCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.inject.Named;
 import java.io.IOException;
 import java.time.Year;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -28,17 +27,17 @@ import java.util.Set;
 public final class RedisVotingService implements VotingService {
 
     private static final Logger LOG = LoggerFactory.getLogger(VotingService.class);
-    private final RedisCommands<String, String> connection;
+    private final VotingDAO votingDao;
     private final ObjectMapper mapper;
     private final Set<String> countries;
     private final Config config;
 
     @Inject
-    public RedisVotingService(RedisCommands<String, String> connection,
+    public RedisVotingService(VotingDAO votingDao,
                               @Named("countries") Set<String> countries,
                               ObjectMapper mapper,
                               Config config) {
-        this.connection = connection;
+        this.votingDao = votingDao;
         this.countries = countries;
         this.mapper = mapper;
         this.config = config;
@@ -54,7 +53,7 @@ public final class RedisVotingService implements VotingService {
      * @param yearParam eurovision year as a path parameter
      * @return validated year as int
      */
-    public int validateYear(final String yearParam) {
+    int validateYear(final String yearParam) {
 
         LOG.debug("Validating Vote Year - {}", yearParam);
         int year;
@@ -92,13 +91,15 @@ public final class RedisVotingService implements VotingService {
         try {
             vote = mapper.readValue(body, Vote.class);
         } catch (IOException ex) {
-            LOG.error(ex.getMessage(), ex);
+            LOG.error(ex.getMessage());
             throw new InvalidVoteBodyException();
         }
 
-        if (vote == null) {
+        if (vote == null || vote.getCountryFrom() == null || vote.getVotedFor() == null) {
             throw new InvalidVoteBodyException();
         }
+
+
 
         String from = vote.getCountryFrom().toLowerCase();
         String to = vote.getVotedFor().toLowerCase();
@@ -115,7 +116,7 @@ public final class RedisVotingService implements VotingService {
             throw new InvalidCountryException(prettifyCountry(to));
         }
 
-        return new Vote(from, to);
+        return new Vote(prettifyCountry(from), prettifyCountry(to));
     }
 
     /**
@@ -141,9 +142,8 @@ public final class RedisVotingService implements VotingService {
     @Override
     public long cast(final int year, final Vote vote) {
         LOG.debug("Casting vote - {}", vote);
-        RedisCommands<String, String> commands = connection;
-        double totalVotes = commands.zincrby(String.format("euro_vision:aggregate:%d", year), 1, vote.getVotedFor());
-        commands.hmset(String.format("euro_vision:votes:%d:%d", year, System.currentTimeMillis()), Map.of("countryFrom", vote.getCountryFrom(), "votedFor", vote.getVotedFor()));
+        double totalVotes = votingDao.incrementAggregateForCountry(year, vote.getVotedFor());
+        votingDao.saveVote(year, vote);
         LOG.debug("Total Votes Cast for {} - {}", vote.getVotedFor(), totalVotes);
         return (long) totalVotes;
     }
@@ -159,9 +159,7 @@ public final class RedisVotingService implements VotingService {
     @Override
     public Winners getResults(final int year) {
         LOG.debug("Fetching Results for {} ", year);
-        List<String> result = connection.zrevrange(String.format("euro_vision:aggregate:%d", year), 0, 3);
-        LOG.debug(result.toString());
-        Winners winners = new Winners(year, result.get(0), result.get(1), result.get(2));
+        Winners winners = votingDao.getResults(year);
         LOG.debug("Winners for {} - {}", year, winners);
         return winners;
     }

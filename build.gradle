@@ -65,6 +65,7 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:1.2.3"
     implementation 'org.logback-extensions:logback-ext-loggly:0.1.2'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.5.2'
+    testImplementation 'org.mockito:mockito-core:3.2.4'
     testImplementation 'com.github.kstyrc:embedded-redis:0.6'
     integrationTestImplementation 'io.rest-assured:rest-assured:4.2.0'
     integrationTestImplementation 'io.rest-assured:json-path:4.2.0'

@@ -1,5 +1,7 @@
 package com.deepster.eurovision;
 
+import com.deepster.eurovision.voting.dao.RedisVotingDAO;
+import com.deepster.eurovision.voting.dao.VotingDAO;
 import com.deepster.eurovision.voting.services.RedisVotingService;
 import com.deepster.eurovision.voting.services.VotingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +22,6 @@ import java.time.Duration;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// TODO move voting related module to a submodule in voting folder
 public final class GlobalModule extends AbstractModule {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalModule.class);
@@ -30,6 +31,7 @@ public final class GlobalModule extends AbstractModule {
         bind(Config.class).toInstance(ConfigFactory.load());
         bind(ObjectMapper.class).toInstance(new ObjectMapper());
         bind(VotingService.class).to(RedisVotingService.class).in(Scopes.SINGLETON);
+        bind(VotingDAO.class).to(RedisVotingDAO.class).in(Scopes.SINGLETON);
         bind(Router.class).toInstance(new Router());
 
     }

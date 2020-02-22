@@ -39,30 +39,13 @@ If data consistency is a priority , we could go for a relational database with r
 ## Features 
 
 ```text
-            [X] Done  [-] Pending
-    [x] POST call to accept votes for a year
-    [x] GET call to show top 3 winners for a year
-    [x] Validate countries
-    [x] Return proper HTTP codes  
-    [x] API tests
-    [x] Logging ( linked to loggly )
-    [x] Unit Tests for VotingService
-    [x] Gradle tasks for check, test, build and run
-    [-] Containerization
-    [-] Extranalize all strings and support Internationalization
-    [-] Setup docker-compose for deployment
-    [-] Deploy to any cloud provider
-    [-] Code Analysis
-    [-] CORS support
-    [-] Caching to improve speed of GET calls
-    [-] Metrics (throughput, latency, jvm metrics (memory, cpu) disk )
-    [-] Performance Testing
+
 ```
 
 ## Tech Stack
 
 - Git 
-- Java 13
+- Java 11
 - Gradle
 - Spark
 - Redis

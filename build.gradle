@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'com.deepster.eurovision'
-version '1.0.0'
+version = "$version"
 applicationName = 'EuroVisionVoting'
 wrapper {
     gradleVersion '6.2'
@@ -94,6 +94,11 @@ jacocoTestReport {
         csv.enabled false
         html.destination file("${buildDir}/reports/jacocoHtml")
     }
+}
+
+release {
+    tagTemplate = 'v$version'
+    versionPropertyFile = 'gradle.properties'
 }
 
 
